@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <title>Elm Audio Messages</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div id="main"></div>
+    <script src="scripts/recorder.js"></script>
+    <script src="scripts/audio-recorder.js"></script>
+    <script src="elm.js"></script>
+    <script>
+      const recorder = new AudioRecorder()
+      const node = document.querySelector('#main')
+      const app = Elm.Main.embed(node)
+      app.ports.record.subscribe((record) => {
+        if (record) {
+          recorder.record()
+        } else {
+          recorder.stop().then((recordedUrls) => {
+            app.ports.recording.send(recordedUrls.slice(-1)[0])
+          })
+        }
+      })
+    </script>
+  </body>
+</html>
