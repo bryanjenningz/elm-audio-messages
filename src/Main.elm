@@ -69,7 +69,11 @@ update msg model =
             ( { model | chatMessages = model.chatMessages ++ [ Text text ], text = "" }, Cmd.none )
 
         ToggleRecording ->
-            ( { model | recording = not model.recording }, record (not model.recording) )
+            let
+                recording =
+                    not model.recording
+            in
+                ( { model | recording = recording }, record recording )
 
         AddAudio audio ->
             ( { model | chatMessages = model.chatMessages ++ [ Audio audio ] }, Cmd.none )
