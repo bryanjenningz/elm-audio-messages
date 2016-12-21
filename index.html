@@ -19,8 +19,9 @@
         if (record) {
           recorder.record()
         } else {
-          recorder.stop().then((recordedUrls) => {
-            app.ports.recording.send(recordedUrls.slice(-1)[0])
+          recorder.stop().then((audioUrls) => {
+            const lastAudioUrl = audioUrls.slice(-1)[0]
+            app.ports.addAudio.send(lastAudioUrl)
           })
         }
       })

@@ -71,19 +71,19 @@ update msg model =
         ToggleRecording ->
             ( { model | recording = not model.recording }, record (not model.recording) )
 
-        AddAudio recording ->
-            ( { model | chatMessages = model.chatMessages ++ [ Audio recording ] }, Cmd.none )
+        AddAudio audio ->
+            ( { model | chatMessages = model.chatMessages ++ [ Audio audio ] }, Cmd.none )
 
 
 port record : Bool -> Cmd msg
 
 
-port recording : (String -> msg) -> Sub msg
+port addAudio : (String -> msg) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    recording AddAudio
+    addAudio AddAudio
 
 
 main : Program Never Model Msg
