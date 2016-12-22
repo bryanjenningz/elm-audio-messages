@@ -8,10 +8,12 @@
   </head>
   <body>
     <div id="main"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.js"></script>
     <script src="scripts/recorder.js"></script>
     <script src="scripts/audio-recorder.js"></script>
     <script src="elm.js"></script>
     <script>
+      const socket = io()
       const recorder = new AudioRecorder()
       const node = document.querySelector('#main')
       const app = Elm.Main.embed(node)
@@ -24,6 +26,12 @@
             app.ports.addAudio.send(lastAudioUrl)
           })
         }
+      })
+      app.ports.sendText.subscribe((text) => {
+        socket.emit('sendText', text)
+      })
+      socket.on('receiveText', (text) => {
+        app.ports.receiveText.send(text)
       })
     </script>
   </body>

@@ -15,6 +15,7 @@ type Msg
     | AddText String
     | ToggleRecording
     | AddAudio String
+    | SendText String
 
 
 type alias Model =
@@ -34,7 +35,7 @@ view model =
     div [ class "text-center" ] <|
         [ text (toString model)
         , form
-            [ onSubmit (AddText model.text) ]
+            [ onSubmit (SendText model.text) ]
             [ input [ onInput ChangeText, value model.text ] [] ]
         , button
             [ onClick ToggleRecording ]
@@ -68,6 +69,9 @@ update msg model =
         AddText text ->
             ( { model | chatMessages = model.chatMessages ++ [ Text text ], text = "" }, Cmd.none )
 
+        SendText text ->
+            ( model, sendText text )
+
         ToggleRecording ->
             let
                 recording =
@@ -82,12 +86,21 @@ update msg model =
 port record : Bool -> Cmd msg
 
 
+port sendText : String -> Cmd msg
+
+
+port receiveText : (String -> msg) -> Sub msg
+
+
 port addAudio : (String -> msg) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    addAudio AddAudio
+    Sub.batch
+        [ addAudio AddAudio
+        , receiveText AddText
+        ]
 
 
 main : Program Never Model Msg
