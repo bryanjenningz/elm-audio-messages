@@ -12,8 +12,8 @@ type ChatMessage
 
 type Msg
     = ChangeText String
-    | AddText String
     | ToggleRecording
+    | AddText String
     | AddAudio String
     | SendText String
 
@@ -66,12 +66,6 @@ update msg model =
         ChangeText text ->
             ( { model | text = text }, Cmd.none )
 
-        AddText text ->
-            ( { model | chatMessages = model.chatMessages ++ [ Text text ], text = "" }, Cmd.none )
-
-        SendText text ->
-            ( model, sendText text )
-
         ToggleRecording ->
             let
                 recording =
@@ -79,8 +73,14 @@ update msg model =
             in
                 ( { model | recording = recording }, record recording )
 
+        AddText text ->
+            ( { model | chatMessages = model.chatMessages ++ [ Text text ], text = "" }, Cmd.none )
+
         AddAudio audio ->
             ( { model | chatMessages = model.chatMessages ++ [ Audio audio ] }, Cmd.none )
+
+        SendText text ->
+            ( model, sendText text )
 
 
 port record : Bool -> Cmd msg
@@ -92,13 +92,13 @@ port sendText : String -> Cmd msg
 port receiveText : (String -> msg) -> Sub msg
 
 
-port addAudio : (String -> msg) -> Sub msg
+port receiveAudio : (String -> msg) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ addAudio AddAudio
+        [ receiveAudio AddAudio
         , receiveText AddText
         ]
 

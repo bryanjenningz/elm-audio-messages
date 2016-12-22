@@ -21,17 +21,20 @@
         if (record) {
           recorder.record()
         } else {
-          recorder.stop().then((audioUrls) => {
-            const lastAudioUrl = audioUrls.slice(-1)[0]
-            app.ports.addAudio.send(lastAudioUrl)
+          recorder.stop().then(audios => {
+            const lastAudio = audios.slice(-1)[0]
+            socket.emit('sendAudio', lastAudio)
           })
         }
       })
-      app.ports.sendText.subscribe((text) => {
+      app.ports.sendText.subscribe(text => {
         socket.emit('sendText', text)
       })
-      socket.on('receiveText', (text) => {
+      socket.on('receiveText', text => {
         app.ports.receiveText.send(text)
+      })
+      socket.on('receiveAudio', audio => {
+        app.ports.receiveAudio.send(audio)
       })
     </script>
   </body>
